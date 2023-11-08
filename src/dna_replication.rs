@@ -1,5 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
+
 /// Finds the number of times that the `pattern` is found in the `text`
 pub fn pattern_count(text: &str, pattern: &str) -> usize {
 
@@ -12,6 +13,7 @@ pub fn pattern_count(text: &str, pattern: &str) -> usize {
         .filter(|x| *x == true)
         .count()
 }
+
 
 /// Finds the most frequent k-mers for a certain `k` in the `text`
 pub fn frequent_words(text: &str, k: usize) -> HashSet<String> {
@@ -63,11 +65,13 @@ pub fn frequent_words(text: &str, k: usize) -> HashSet<String> {
 
 }
 
+
 #[cfg(test)]
 mod tests {
     use std::collections::{HashMap, HashSet};
     use std::fs;
     use crate::dna_replication::{frequent_words, pattern_count};
+
 
     #[test]
     fn pattern_count_test() {
@@ -100,15 +104,37 @@ mod tests {
 
     }
 
+
     #[test]
     fn frequent_words_test() {
+        let ori_region_of_vibrio_cholerae =
+            "\
+            atcaatgatcaacgtaagcttctaagcatgatcaaggtgctcacacagtttatccacaac\
+            ctgagtggatgacatcaagataggtcgttgtatctccttcctctcgtactctcatgacca\
+            cggaaagatgatcaagagaggatgatttcttggccatatcgcaatgaatacttgtgactt\
+            gtgcttccaattgacatcttcagcgccatattgcgctggccaaggtgacggagcgggatt\
+            acgaaagcatgatcatggctgttgttctgtttatcttgttttgactgagacttgttagga\
+            tagacggtttttcatcactgactagccaaagccttactctgcctgacatcgaccgtaaat\
+            tgataatgaatttacatgcttccgcgacgatttacctcttgatcatcgatccgattgaag\
+            atcttcaattgttaattctcttgcctcgactcatagccatgatgagctcttgatcatgtt\
+            tccttaaccctctattttttacggaagaatgatcaagctgctgctcttgatcatcgtttc\
+            ";
+
+        // Experiments have revealed that bacterial DnaA boxes are usually 9 nucleotides long
+        // The probability that there exists a 9-mer appearing three or more times in a randomly
+        // generated DNA string of length 500 is approximately 1/1300
         assert_eq!(
-            frequent_words("ACGTTGCATGTCGCATGATGCATGAGAGCT", 4),
-            HashSet::from(["CATG".to_string(), "GCAT".to_string()])
+            frequent_words(ori_region_of_vibrio_cholerae, 9),
+            HashSet::from([
+                "atgatcaag".to_string(), // All of these are found 3 times in the ori
+                "cttgatcat".to_string(),
+                "tcttgatca".to_string(),
+                "ctcttgatc".to_string()])
         );
 
+        // Test edge-case of empty text
         assert_eq!(
-            frequent_words("", 4),
+            frequent_words("", 1),
             HashSet::new()
         );
     }
