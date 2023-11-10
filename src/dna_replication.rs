@@ -1,4 +1,5 @@
 use std::collections::{HashMap, HashSet};
+use crate::utils::DNA_COMPLEMENT;
 
 #[cfg(test)]
 mod tests;
@@ -65,4 +66,16 @@ pub fn frequent_words(text: &str, k: usize) -> HashSet<String> {
 
     max_map(frequency_table(text, k))
 
+}
+
+
+/// Finds the reverse complement of a `dna` string
+pub fn dna_reverse_complement(dna: &str) -> String {
+    dna.chars()
+        .map(|nucleotide| DNA_COMPLEMENT
+            .get(&nucleotide)
+            .expect("DNA must be valid nucleotides [A, T, G, C]. Case is irrelevant.")
+        )
+        .rev()
+        .collect()
 }

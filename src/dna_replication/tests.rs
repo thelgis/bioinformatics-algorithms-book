@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 use std::fs;
-use crate::dna_replication::{frequent_words, pattern_count};
+use crate::dna_replication::{dna_reverse_complement, frequent_words, pattern_count};
 
 
 #[test]
@@ -48,7 +48,7 @@ fn frequent_words_test() {
             tgataatgaatttacatgcttccgcgacgatttacctcttgatcatcgatccgattgaag\
             atcttcaattgttaattctcttgcctcgactcatagccatgatgagctcttgatcatgtt\
             tccttaaccctctattttttacggaagaatgatcaagctgctgctcttgatcatcgtttc\
-            ";
+        ";
 
     // Experiments have revealed that bacterial DnaA boxes are usually 9 nucleotides long
     // The probability that there exists a 9-mer appearing three or more times in a randomly
@@ -67,4 +67,24 @@ fn frequent_words_test() {
         frequent_words("", 1),
         HashSet::new()
     );
+}
+
+#[test]
+fn dna_reverse_complement_test() {
+
+    for iter in 1..4 {
+
+        let input_path =
+            format!("resources/dna_replication/reverse_complement/inputs/input_{iter}.txt");
+        let output_path =
+            format!("resources/dna_replication/reverse_complement/outputs/output_{iter}.txt");
+
+        let dna = fs::read_to_string(input_path)
+            .expect("Should have been able to read the file");
+        let reverse_complement = fs::read_to_string(output_path)
+            .expect("Should have been able to read the file");
+
+        assert_eq!(dna_reverse_complement(&dna), reverse_complement)
+    }
+
 }
