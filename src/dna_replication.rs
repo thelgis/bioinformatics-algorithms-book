@@ -1,5 +1,5 @@
 use std::collections::{HashMap, HashSet};
-use crate::utils::DNA_COMPLEMENT;
+use crate::utils::bio_utils::DNA_COMPLEMENT;
 
 #[cfg(test)]
 mod tests;

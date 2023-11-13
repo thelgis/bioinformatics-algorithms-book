@@ -1,6 +1,7 @@
 use std::collections::{HashMap, HashSet};
 use std::fs;
 use crate::dna_replication::{dna_reverse_complement, frequent_words, pattern_count};
+use crate::utils::file_utils::read_two_line_file;
 
 
 #[test]
@@ -17,19 +18,10 @@ fn pattern_count_test() {
     ]);
 
     for iter in 1..9 {
-
-        let file_contents = fs::read_to_string(
-            format!("resources/dna_replication/pattern_count/inputs/input_{iter}.txt")
-        ).expect("Should have been able to read the file");
-
-        let file_contents_vec: Vec<&str> = file_contents
-            .split("\n")
-            .collect();
-
-        let text = file_contents_vec[0];
-        let pattern = file_contents_vec[1];
-
-        assert_eq!(pattern_count(text, pattern), correct_answers_per_file[&iter])
+        let (text, pattern) = read_two_line_file(
+            &format!("resources/dna_replication/pattern_count/inputs/input_{iter}.txt")
+        );
+        assert_eq!(pattern_count(&text, &pattern), correct_answers_per_file[&iter])
     }
 
 }
