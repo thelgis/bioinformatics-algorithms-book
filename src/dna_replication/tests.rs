@@ -84,6 +84,7 @@ fn dna_reverse_complement_test() {
 
 #[test]
 fn pattern_matching_test() {
+
     for iter in 1..7 {
 
         let (pattern, text) = read_two_line_file(
@@ -100,4 +101,20 @@ fn pattern_matching_test() {
         assert_eq!(pattern_matching(&pattern, &text), correct_offsets)
 
     }
+
+    // Also test a real example: Genome of 'Vibrio Cholerae'
+    let vibrio_cholerae_genome =
+        fs::read_to_string("resources/dna_replication/pattern_matching/inputs/Vibrio_cholerae.txt")
+            .expect("Should have been able to read the file");
+
+    let vibrio_cholerae_pattern = "ATGATCAAG";
+
+    let calculated_positions = pattern_matching(&vibrio_cholerae_pattern, &vibrio_cholerae_genome);
+    let expected_positions = [
+        116556, 149355, 151913, 152013, 152394, 186189, 194276, 200076, 224527, 307692, 479770,
+        610980, 653338, 679985, 768828, 878903, 985368
+    ];
+
+    assert_eq!(calculated_positions, expected_positions)
+
 }
