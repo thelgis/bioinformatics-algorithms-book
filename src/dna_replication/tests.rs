@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 use std::fs;
-use crate::dna_replication::{dna_reverse_complement, frequent_words, pattern_count};
+use crate::dna_replication::{dna_reverse_complement, frequent_words, pattern_count, pattern_matching};
 use crate::utils::file_utils::read_two_line_file;
 
 
@@ -79,4 +79,25 @@ fn dna_reverse_complement_test() {
         assert_eq!(dna_reverse_complement(&dna), reverse_complement)
     }
 
+}
+
+
+#[test]
+fn pattern_matching_test() {
+    for iter in 1..7 {
+
+        let (pattern, text) = read_two_line_file(
+            &format!("resources/dna_replication/pattern_matching/inputs/input_{iter}.txt")
+        );
+
+        let correct_offsets: Vec<i128> =
+            fs::read_to_string(format!("resources/dna_replication/pattern_matching/outputs/output_{iter}.txt"))
+                .expect("Should have been able to read the file")
+                .split(" ")
+                .map(|x| x.parse::<i128>().unwrap())
+                .collect();
+
+        assert_eq!(pattern_matching(&pattern, &text), correct_offsets)
+
+    }
 }

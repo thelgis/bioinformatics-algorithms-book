@@ -79,3 +79,24 @@ pub fn dna_reverse_complement(dna: &str) -> String {
         .rev()
         .collect()
 }
+
+
+/// Creates a list of offsets specifying all starting positions where
+/// `pattern` appears as a substring of `genome`.
+pub fn pattern_matching(pattern: &str, genome: &str) -> Vec<i128> {
+
+    let pattern_as_chars = pattern.chars().collect::<Vec<char>>();
+    let genome_as_chars = genome.chars().collect::<Vec<char>>();
+
+    let pattern_len = pattern.len();
+    let mut indices: Vec<i128> = Vec::new();
+
+    for index in 0..genome.len() - pattern_len + 1 { // + 1 because for loop is exclusive on the right
+        if pattern_as_chars == &genome_as_chars[index ..= index + pattern_len - 1] {
+            indices.push(index as i128);
+        }
+    }
+
+    indices
+
+}
