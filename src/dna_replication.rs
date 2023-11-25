@@ -18,54 +18,57 @@ pub fn pattern_count(text: &str, pattern: &str) -> usize {
 }
 
 
+/// Builds a HashMap <k-mer->frequency> of the frequency at which each k-mer for a certain `k`
+/// appears in the `text`
+fn frequency_table(text: &str, k: usize) -> HashMap<String, i64> {
+    let text_as_chars = text.chars().collect::<Vec<char>>();
+    let mut frequencies: HashMap<String, i64> = HashMap::new();
+
+    text_as_chars.windows(k)
+        .for_each(|k_mer| {
+            let k_mer_str = k_mer.iter().collect::<String>();
+            let existing_freq = frequencies.get_mut(&k_mer_str);
+
+            if existing_freq == None {
+                frequencies.insert(k_mer_str.to_string(), 1);
+            } else {
+                *existing_freq.unwrap() += 1;
+            }
+        });
+
+    frequencies
+}
+
+
+/// From a `map`, returns all the keys where the value equals a given `value`
+fn find_values_in_map(map: &HashMap<String, i64>, value: i64) -> HashSet<String> {
+    map
+        .iter()
+        .filter_map(|key_value|
+            if key_value.1 == &value { Some(key_value.0) } else { None }
+        )
+        .cloned()
+        .collect()
+}
+
+
+/// Returns the keys of the map that have the maximum value
+fn max_map(frequency_map: &HashMap<String, i64>) -> HashSet<String> {
+    let max_value_opt = frequency_map.values().max();
+
+    match max_value_opt {
+        Some(max_value) => {
+            let result: HashSet<String> = find_values_in_map(frequency_map, *max_value);
+            result
+        },
+        None => HashSet::new()
+    }
+
+}
+
 /// Finds the most frequent k-mers for a certain `k` in the `text`
 pub fn frequent_words(text: &str, k: usize) -> HashSet<String> {
-
-    /// Builds a HashMap <k-mer->frequency> of the frequency at which each k-mer for a certain `k`
-    /// appears in the `text`
-    fn frequency_table(text: &str, k: usize) -> HashMap<String, i64> {
-        let text_as_chars = text.chars().collect::<Vec<char>>();
-        let mut frequencies: HashMap<String, i64> = HashMap::new();
-
-        text_as_chars.windows(k)
-            .for_each(|k_mer| {
-                let k_mer_str = k_mer.iter().collect::<String>();
-                let existing_freq = frequencies.get_mut(&k_mer_str);
-
-                if existing_freq == None {
-                    frequencies.insert(k_mer_str.to_string(), 0);
-                } else {
-                    *existing_freq.unwrap() += 1;
-                }
-            });
-
-        frequencies
-    }
-
-    /// Returns the keys of the map that have the maximum value
-    fn max_map(frequency_map: HashMap<String, i64>) -> HashSet<String> {
-        let max_value_opt = frequency_map.values().max();
-
-        match max_value_opt {
-            Some(max_value) => {
-                let result: HashSet<String> = frequency_map
-                    .iter()
-                    .filter_map(|key_value|
-                        if key_value.1 == max_value { Some(key_value.0) } else { None }
-                    )
-                    .cloned()
-                    .collect();
-
-                result
-            },
-            None => HashSet::new()
-        }
-
-
-    }
-
-    max_map(frequency_table(text, k))
-
+    max_map(&frequency_table(text, k))
 }
 
 
@@ -98,5 +101,45 @@ pub fn pattern_matching(pattern: &str, genome: &str) -> Vec<i128> {
     }
 
     indices
+
+}
+
+
+/// Finds k-mers that are clumps in a `genome`.
+///
+/// We define a `k`-mer as a "clump" if it appears many times within a short interval of the genome.
+/// More formally, given a part of the genome with a certain `length`, and a certain `frequency`,
+/// a k-mer Pattern forms a (`length`, `frequency`)-clump inside a (longer) string `genome`
+/// if there is an interval of `genome` of that `length` in which this k-mer appears at least
+/// `frequency` times.
+///
+/// This definition assumes that the k-mer completely fits within the interval and does not take
+/// reverse complements into account.
+pub fn find_clumps(genome: &str, length: usize, frequency: i64, k: usize) -> HashSet<String> {
+    let genome_as_chars = genome.chars().collect::<Vec<char>>();
+
+    let all_clumps: Vec<HashSet<String>> = genome_as_chars
+        .windows(length)
+        .filter_map(|window| {
+
+            let genome_interval: String = window.iter().collect();
+            let frequency_table = frequency_table(&genome_interval, k);
+            let k_mers = find_values_in_map(&frequency_table, frequency);
+
+            if k_mers.is_empty() { None } else { Some(k_mers) }
+        })
+        .collect();
+
+    // TODO Need to come back here and understand better the reference handling
+    let combined_sets: Option<HashSet<String>> = all_clumps
+        .into_iter()
+        .reduce(|left, right|
+            left.union(&right).cloned().collect()
+        );
+
+    match combined_sets {
+        Some(set) => set.to_owned(),
+        None => HashSet::new()
+    }
 
 }

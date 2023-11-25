@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 use std::fs;
-use crate::dna_replication::{dna_reverse_complement, frequent_words, pattern_count, pattern_matching};
+use crate::dna_replication::{dna_reverse_complement, frequent_words, pattern_count, pattern_matching, find_clumps};
 use crate::utils::file_utils::read_two_line_file;
 
 
@@ -116,5 +116,27 @@ fn pattern_matching_test() {
     ];
 
     assert_eq!(calculated_positions, expected_positions)
+
+}
+
+
+#[test]
+fn find_clumps_test() {
+
+    let genome =
+        "CGGACTCGACAGATGTGAAGAACGACAATGTGAAGACTCGACACGACAGAGTGAAGAGAAGAGGAAACATTGTAA";
+    let length = 50;
+    let frequency = 4;
+    let k = 5;
+
+    assert_eq!(
+        find_clumps(genome, length, frequency, k),
+        vec!["CGACA".to_string(), "GAAGA".to_string()].into_iter().collect::<HashSet<String>>()
+    );
+
+    assert_eq!(
+        find_clumps(genome, length, 5, k),
+        HashSet::new()
+    )
 
 }
