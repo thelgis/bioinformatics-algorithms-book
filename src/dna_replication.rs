@@ -40,12 +40,15 @@ fn frequency_table(text: &str, k: usize) -> HashMap<String, i64> {
 }
 
 
-/// From a `map`, returns all the keys where the value equals a given `value`
-fn find_values_in_map(map: &HashMap<String, i64>, value: i64) -> HashSet<String> {
+/// From a `map`, returns all the keys where the value returns true for a given `predicate`
+fn find_values_in_map<F>(
+    map: &HashMap<String, i64>,
+    predicate: F
+) -> HashSet<String> where F: Fn(&i64) -> bool {
     map
         .iter()
         .filter_map(|key_value|
-            if key_value.1 == &value { Some(key_value.0) } else { None }
+            if predicate(key_value.1) { Some(key_value.0) } else { None }
         )
         .cloned()
         .collect()
@@ -58,7 +61,10 @@ fn max_map(frequency_map: &HashMap<String, i64>) -> HashSet<String> {
 
     match max_value_opt {
         Some(max_value) => {
-            let result: HashSet<String> = find_values_in_map(frequency_map, *max_value);
+            let result: HashSet<String> = find_values_in_map(
+                frequency_map,
+                |map_value| map_value == max_value
+            );
             result
         },
         None => HashSet::new()
@@ -124,7 +130,10 @@ pub fn find_clumps(genome: &str, length: usize, frequency: i64, k: usize) -> Has
 
             let genome_interval: String = window.iter().collect();
             let frequency_table = frequency_table(&genome_interval, k);
-            let k_mers = find_values_in_map(&frequency_table, frequency);
+            let k_mers = find_values_in_map(
+                &frequency_table,
+                |map_value| map_value >= &frequency
+            );
 
             if k_mers.is_empty() { None } else { Some(k_mers) }
         })

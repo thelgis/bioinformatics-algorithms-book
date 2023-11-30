@@ -21,7 +21,7 @@ fn pattern_count_test() {
         let (text, pattern) = read_two_line_file(
             &format!("resources/dna_replication/pattern_count/inputs/input_{iter}.txt")
         );
-        assert_eq!(pattern_count(&text, &pattern), correct_answers_per_file[&iter])
+        assert_eq!(pattern_count(&text, &pattern), correct_answers_per_file[&iter]);
     }
 
 }
@@ -76,7 +76,7 @@ fn dna_reverse_complement_test() {
         let reverse_complement = fs::read_to_string(output_path)
             .expect("Should have been able to read the file");
 
-        assert_eq!(dna_reverse_complement(&dna), reverse_complement)
+        assert_eq!(dna_reverse_complement(&dna), reverse_complement);
     }
 
 }
@@ -115,7 +115,7 @@ fn pattern_matching_test() {
         610980, 653338, 679985, 768828, 878903, 985368
     ];
 
-    assert_eq!(calculated_positions, expected_positions)
+    assert_eq!(calculated_positions, expected_positions);
 
 }
 
@@ -137,6 +137,6 @@ fn find_clumps_test() {
     assert_eq!(
         find_clumps(genome, length, 5, k),
         HashSet::new()
-    )
+    );
 
 }
