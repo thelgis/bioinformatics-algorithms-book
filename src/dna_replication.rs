@@ -120,7 +120,8 @@ pub fn pattern_matching(pattern: &str, genome: &str) -> Vec<i128> {
 /// `frequency` times.
 ///
 /// This definition assumes that the k-mer completely fits within the interval and does not take
-/// reverse complements into account.
+/// reverse complements into account. Also, it's a naive implementation following the course
+/// structure to re-use methods and NOT optimised for performance.
 pub fn find_clumps(genome: &str, length: usize, frequency: i64, k: usize) -> HashSet<String> {
     let genome_as_chars = genome.chars().collect::<Vec<char>>();
 

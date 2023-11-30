@@ -140,3 +140,25 @@ fn find_clumps_test() {
     );
 
 }
+
+
+#[ignore] // too slow to run in the CI
+#[test]
+fn find_clumps_e_coli_test() {
+
+    let e_coli_genome =
+        fs::read_to_string("resources/dna_replication/find_clumps/E_coli.txt")
+            .expect("Should have been able to read the file");
+
+    let length = 500;
+    let frequency = 3;
+    let k = 9;
+
+    let clumps = find_clumps(&e_coli_genome, length, frequency, k);
+
+    assert_eq!(
+        clumps.len(),
+        1904
+    );
+
+}
