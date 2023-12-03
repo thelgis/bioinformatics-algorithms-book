@@ -153,3 +153,29 @@ pub fn find_clumps(genome: &str, length: usize, frequency: i64, k: usize) -> Has
     }
 
 }
+
+
+/// Given a `genome`, creates a Skew vector that can be used to notice statistical patterns on the
+/// 'G' and 'C' content which can help detect an Ori region, or detect if we are traversing the
+/// forward or the reverse DNA half-strand.
+pub fn gc_skew(genome: &str) -> Vec<i32> {
+
+    let mut skew = 0;
+    let mut skew_result: Vec<i32> = vec![0];
+
+    genome
+        .chars()
+        .collect::<Vec<char>>()
+        .iter()
+        .for_each(|nucleotide| {
+            match nucleotide {
+                'G' => skew = skew + 1,
+                'C' => skew = skew - 1,
+                _   => ()
+            }
+            skew_result.push(skew);
+        });
+
+    skew_result
+
+}

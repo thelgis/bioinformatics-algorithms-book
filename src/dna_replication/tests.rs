@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 use std::fs;
-use crate::dna_replication::{dna_reverse_complement, frequent_words, pattern_count, pattern_matching, find_clumps};
+use crate::dna_replication::{dna_reverse_complement, frequent_words, pattern_count, pattern_matching, find_clumps, gc_skew};
 use crate::utils::file_utils::read_two_line_file;
 
 
@@ -161,4 +161,13 @@ fn find_clumps_e_coli_test() {
         1904
     );
 
+}
+
+
+#[test]
+fn gc_skew_test() {
+    assert_eq!(
+        gc_skew("CATGGGCATCGGCCATACGCC"),
+        vec![0, -1, -1, -1, 0, 1, 2, 1, 1, 1, 0, 1, 2, 1, 0, 0, 0, 0, -1, 0, -1, -2]
+    );
 }
