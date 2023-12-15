@@ -1,6 +1,7 @@
 use std::collections::{HashMap, HashSet};
 use std::fs;
-use crate::dna_replication::{dna_reverse_complement, frequent_words, pattern_count, pattern_matching, find_clumps, gc_skew};
+use std::str::FromStr;
+use crate::dna_replication::{dna_reverse_complement, frequent_words, pattern_count, pattern_matching, find_clumps, gc_skew, gc_skew_minimum};
 use crate::utils::file_utils::read_two_line_file;
 
 
@@ -170,4 +171,41 @@ fn gc_skew_test() {
         gc_skew("CATGGGCATCGGCCATACGCC"),
         vec![0, -1, -1, -1, 0, 1, 2, 1, 1, 1, 0, 1, 2, 1, 0, 0, 0, 0, -1, 0, -1, -2]
     );
+}
+
+
+#[test]
+fn gc_skew_minimum_test() {
+
+    assert_eq!(
+        gc_skew_minimum(""),
+        Vec::new()
+    );
+
+    assert_eq!(
+        gc_skew_minimum("TAAAGACTGCCGAGAGGCCAACACGAGTGCTAGAACGAGGGGCGTAAACGCGGGTCCGAT"),
+        vec![11, 24]
+    );
+
+    for iter in 1..7 {
+
+        let input_path =
+            format!("resources/dna_replication/minimum_skew/inputs/input_{iter}.txt");
+        let output_path =
+            format!("resources/dna_replication/minimum_skew/outputs/output_{iter}.txt");
+
+        let genome = fs::read_to_string(input_path)
+            .expect("Should have been able to read the file");
+
+        let expectation = fs::read_to_string(output_path)
+            .expect("Should have been able to read the file")
+            .split_whitespace()
+            .filter_map(|size_str| usize::from_str(size_str).ok())
+            .collect::<Vec<usize>>()
+            ;
+
+        assert_eq!(gc_skew_minimum(&genome), expectation);
+
+    };
+
 }

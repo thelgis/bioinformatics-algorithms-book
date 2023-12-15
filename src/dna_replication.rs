@@ -160,6 +160,10 @@ pub fn find_clumps(genome: &str, length: usize, frequency: i64, k: usize) -> Has
 /// forward or the reverse DNA half-strand.
 pub fn gc_skew(genome: &str) -> Vec<i32> {
 
+    if genome.len() == 0 {
+       return Vec::new()
+    }
+
     let mut skew = 0;
     let mut skew_result: Vec<i32> = vec![0];
 
@@ -177,5 +181,26 @@ pub fn gc_skew(genome: &str) -> Vec<i32> {
         });
 
     skew_result
+
+}
+
+
+/// Find the positions in a `genome` where the skew diagram attains a minimum.
+pub fn gc_skew_minimum(genome: &str) -> Vec<usize> {
+    let skew_vector = gc_skew(genome);
+
+    let minimum_opt = skew_vector.iter().min();
+
+    match minimum_opt {
+        Some(minimum) => {
+            skew_vector
+                .iter()
+                .enumerate()
+                .filter(|(_, &value)| value == *minimum)
+                .map(|(index, _)| index)
+                .collect::<Vec<_>>()
+        },
+        None => Vec::new()
+    }
 
 }
